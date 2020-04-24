@@ -1,0 +1,11 @@
+{
+  "name": "serverless-todo-netlify-fauna-egghead",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "imalbert <albert.s.manuel@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ]
+}
