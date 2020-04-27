@@ -1,4 +1,5 @@
-import React, { useContext } from "react"
+import React, { useContext } from 'react'
+import { Router, Link } from '@reach/router'
 import {
   Container,
   Heading,
@@ -6,11 +7,15 @@ import {
   Flex,
   NavLink,
 } from 'theme-ui'
-import { Link } from 'gatsby'
 import { IdentityContext } from '../../identity-context'
 
-export default props => {
+let Dash = () => {
   const { user, identity } = useContext(IdentityContext)
+
+  if (!user) {
+    return <DashLoggedOut identity={identity} />
+  }
+
   return (
     <Container>
       <Flex as='nav'>
@@ -34,5 +39,31 @@ export default props => {
         </Button>
       </Flex>
     </Container>
+  )
+}
+
+let DashLoggedOut = ({ identity }) => {
+  return (
+    <Container>
+      <Flex sx={{ flexDirection: 'column', padding: 3 }}>
+        <Heading as='h1'>Get Stuff Done</Heading>
+        <Button
+          sx={{ marginTop: 2 }}
+          onClick={() => {
+            identity.open()
+          }}
+        >
+          Log In
+        </Button>
+      </Flex>
+    </Container>
+  )
+}
+
+export default props => {
+  return (
+    <Router>
+      <Dash path='/app' />
+    </Router>
   )
 }
