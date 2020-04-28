@@ -46,9 +46,9 @@ const resolvers = {
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: ({ context }) => {
-    if (context.identity.user) {
-      return { user: context.identity.user }
+  context: ({ event }) => {
+    if (event.requestContext.identity.user) {
+      return { user: event.requestContext.identity.user }
     } else {
       return {}
     }
