@@ -10,7 +10,7 @@ import {
   Label,
 } from 'theme-ui'
 import { gql, useMutation, useQuery } from '@apollo/client'
-import { IdentityContext } from '../../identity-context'
+import { IdentityContext } from '../identity-context'
 
 const ADD_TODO = gql`
   mutation AddTodo($text: String!) {

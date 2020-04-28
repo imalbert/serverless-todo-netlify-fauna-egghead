@@ -8,7 +8,7 @@ import {
   NavLink,
 } from 'theme-ui'
 import { IdentityContext } from '../../identity-context'
-import Dashboard from './dashboard'
+import Dashboard from '../dashboard'
 
 let Dash = () => {
   const { user, identity } = useContext(IdentityContext)
