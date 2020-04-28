@@ -9,26 +9,42 @@ import {
   Input,
   Label,
 } from 'theme-ui'
+import { gql, useMutation, useQuery } from '@apollo/client'
 import { IdentityContext } from '../../identity-context'
 
-const todosReducer = (state, action) => {
-  switch(action.type) {
-    case 'addTodo':
-      return [{ done: false, value: action.payload }, ...state]
-    case 'toggleTodo':
-      const newState = [...state]
-      newState[action.payload] = {
-        done: !state[action.payload].done,
-        value: state[action.payload].value,
-      }
-      return newState
+const ADD_TODO = gql`
+  mutation AddTodo($text: String!) {
+    addTodo(text: $text) {
+      id
+    }
   }
-}
+`
+
+const GET_TODOS = gql`
+  query GetTodos {
+    todos {
+      id
+      text
+      done
+    }
+  }
+`
+
+const UPDATE_TODO_DONE = gql`
+  mutation UpdateTodoDone($id: ID!) {
+    updateTodoDone(id: $id) {
+      text
+      done
+    }
+  }
+`
 
 export default () => {
-  const { user, identity } = useContext(IdentityContext)
-  const [todos, dispatch] = useReducer(todosReducer, [])
+  const { user } = useContext(IdentityContext)
   const inputRef = useRef()
+  const [addTodo] = useMutation(ADD_TODO)
+  const [updateTodoDone] = useMutation(UPDATE_TODO_DONE)
+  const {loading, error, data, refetch} = useQuery(GET_TODOS)
 
   return (
     <Container>
@@ -43,13 +59,11 @@ export default () => {
       </Flex>
       <Flex
         as='form'
-        onSubmit={e => {
+        onSubmit={async e => {
           e.preventDefault()
-          dispatch({
-            type: 'addTodo',
-            payload: inputRef.current.value,
-          })
+          await addTodo({ variables: { text: inputRef.current.value } })
           inputRef.current.value = ''
+          refetch()
         }}
       >
         <Label sx={{ display: 'flex' }}>
@@ -60,14 +74,17 @@ export default () => {
       </Flex>
       <Flex sx={{ flexDirection: 'column' }}>
         <ul sx={{ listStyleType: 'none' }}>
-          {todos.map((todo, i) => (
-            <Flex as='li' key={`todo-${i}-${todo.value}`}
-              onClick={() => {
-                dispatch({ type: 'toggleTodo', payload: i, })
+          {loading ? <div>loading...</div> : null}
+          {error ? <div>{error.message}</div> : null}
+          {!loading && !error && data.todos.map(todo => (
+            <Flex as='li' key={`todo-${todo.id}`}
+              onClick={async () => {
+                await updateTodoDone({ variables: {id: todo.id}})
+                await refetch()
               }}
             >
               <Checkbox checked={todo.done} />
-              <span>{todo.value}</span>
+              <span>{todo.text}</span>
             </Flex>
           ))}
         </ul>
