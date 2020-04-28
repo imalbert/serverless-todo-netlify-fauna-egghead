@@ -11,6 +11,7 @@
   "dependencies": {
     "@apollo/client": "^3.0.0-beta.44",
     "@theme-ui/presets": "^0.3.0",
+    "apollo-link-context": "^1.0.20",
     "gatsby": "^2.20.29",
     "gatsby-plugin-create-client-paths": "^2.2.4",
     "netlify-identity-widget": "^1.5.6",
